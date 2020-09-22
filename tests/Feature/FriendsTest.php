@@ -59,32 +59,35 @@ class FriendsTest extends TestCase
     /** @test */
     public function friend_request_can_be_accepted()
     {
-        // $this->withoutExceptionHandling();
         $this->actingAs($user = factory(\App\User::class)->create(), 'api');
         $anotherUser = factory(\App\User::class)->create();
         $this->post('/api/friend-request', [
-            "friend_id" => $anotherUser->id
+            'friend_id' => $anotherUser->id,
         ])->assertStatus(200);
+
         $response = $this->actingAs($anotherUser, 'api')
             ->post('/api/friend-request-response', [
                 'user_id' => $user->id,
                 'status' => 1,
             ])->assertStatus(200);
+
         $friendRequest = \App\Friend::first();
         $this->assertNotNull($friendRequest->confirmed_at);
         $this->assertInstanceOf(Carbon::class, $friendRequest->confirmed_at);
-        $this->assertEquals(now()->StartOfSecond(), $friendRequest->confirmed_at);
+        $this->assertEquals(now()->startOfSecond(), $friendRequest->confirmed_at);
         $this->assertEquals(1, $friendRequest->status);
         $response->assertJson([
             'data' => [
                 'type' => 'friend-request',
                 'friend_request_id' => $friendRequest->id,
                 'attributes' => [
-                    'confirmed_at' => $friendRequest->confirmed_at->diffForHumans()
+                    'confirmed_at' => $friendRequest->confirmed_at->diffForHumans(),
+                    'friend_id' => $friendRequest->friend_id,
+                    'user_id' => $friendRequest->user_id,
                 ]
             ],
             'links' => [
-                'self' => url('/users/' . $anotherUser->id)
+                'self' => url('/users/'.$anotherUser->id),
             ]
         ]);
     }

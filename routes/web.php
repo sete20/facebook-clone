@@ -12,9 +12,8 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-Route::get('/home', 'appController@index')->name('home');
-
 Auth::routes();
-
-Route::get('{any}', 'HomeController@index')->where('any','.*')->middleware('auth')->name('home');
+Route::get('{any}', 'AppController@index')
+    ->where('any', '.*')
+    ->middleware('auth')
+    ->name('home');

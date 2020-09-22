@@ -10,13 +10,25 @@
              </div>
              <p class="ml-4 text-2xl text-gray-100 ">{{user.data.attributes.name}}</p>
          </div>
-         <div class="absolute bottom-0 right-0 z-20 flex items-center mb-4 mr-12 ">
-             <button class="py-1 bg-gray-400 rounded px3"
-             @click="$store.dispatch('sendFriendRequest',$route.params.userId)">
-              {{ friendButtonText }}
-             </button>
-         </div>
-       </div>
+     
+            <div class="absolute flex items-center bottom-0 right-0 mb-4 mr-12 z-20">
+                <button v-if="friendButtonText && friendButtonText !== 'Accept'"
+                        class="py-1 px-3 bg-gray-400 rounded"
+                        @click="$store.dispatch('sendFriendRequest', $route.params.userId)">
+                    {{ friendButtonText }}
+                </button>
+                <button v-if="friendButtonText && friendButtonText === 'Accept'"
+                        class="mr-2 py-1 px-3 bg-blue-500 rounded"
+                        @click="$store.dispatch('acceptFriendRequest', $route.params.userId)">
+                    Accept
+                </button>
+                <button v-if="friendButtonText && friendButtonText === 'Accept'"
+                        class="py-1 px-3 bg-gray-400 rounded"
+                        @click="$store.dispatch('ignoreFriendRequest', $route.params.userId)">
+                    Ignore
+                </button>
+            </div>
+        </div>
        <p v-if="postLoading">Loading Posts ......</p>
          <Post v-else v-for="post in posts.data" :key="post.data.post_id" :post="post"/>
          <p v-if="! postLoading && posts.data.length < 1"> No Posts Yet. Get Starting !</p>
@@ -26,9 +38,10 @@
 </template>
 <script>
 import Post from "../../components/Post";
-import { mapGetters } from "vuex";
-export default {
-  name: "Show",
+import {mapGetters} from 'vuex';
+
+    export default {
+        name: "Show",
   components: {
     Post,
   },
@@ -44,7 +57,7 @@ export default {
     axios
       .get("/api/users/" + this.$route.params.userId)
       .then((res) => {
-        this.user = res.data;
+        this.$store.user = res.data;
       })
       .catch((error) => {
         console.log("unable to fatch");
@@ -66,10 +79,10 @@ export default {
   },
   computed: {
     ...mapGetters({
-      user: "user",
+   user: 'user',
       // posts: 'posts',
       // status: 'status',
-      friendButtonText: "friendButtonText",
+   friendButtonText: 'friendButtonText',
     }),
   },
 };

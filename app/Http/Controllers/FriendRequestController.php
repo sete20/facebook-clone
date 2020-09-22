@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\UserNotFoundException;
+use App\Exceptions\ValidationErrorException;
 use App\Friend;
+use App\Http\Resources\Friend as FriendResource;
 use App\User;
-use App\Http\Resources\Friend as FriendResource ;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
+
 class FriendRequestController extends Controller
 {
     public function store()
