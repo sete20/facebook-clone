@@ -1,11 +1,16 @@
 const state = {
     user: null,
-    userStatus: null
+    userStatus: null,
+    posts: null,
+    postsStatus: null
 };
 
 const getters = {
     user: state => {
         return state.user;
+    },
+    posts: state => {
+        return state.posts;
     },
     status: state => {
         return {
@@ -24,7 +29,7 @@ const getters = {
         } else if (
             getters.friendship.data.attributes.confirmed_at === null &&
             getters.friendship.data.attributes.friend_id !==
-                rootState.User.user.data.user_id
+            rootState.User.user.data.user_id
         ) {
             return "Pending Friend Request";
         } else if (getters.friendship.data.attributes.confirmed_at !== null) {
@@ -36,7 +41,10 @@ const getters = {
 };
 
 const actions = {
-    fetchUser({ commit, dispatch }, userId) {
+    fetchUser({
+        commit,
+        dispatch
+    }, userId) {
         commit("setUserStatus", "loading");
 
         axios
@@ -49,7 +57,25 @@ const actions = {
                 commit("setUserStatus", "error");
             });
     },
-    sendFriendRequest({ commit, getters }, friendId) {
+    fetchUserPosts({
+        commit,
+        dispatch
+    }, userId) {
+        commit("setpPostsStatus", "loading");
+
+        axios.get("/api/users/" + userId + '/posts')
+            .then(res => {
+                commit("setPosts", res.data);
+                commit("setpPostsStatus", "success");
+            })
+            .catch(error => {
+                commit("setpPostsStatus", "error");
+            });
+    },
+    sendFriendRequest({
+        commit,
+        getters
+    }, friendId) {
         if (getters.friendButtonText !== "Add Friend") {
             return;
         }
@@ -63,7 +89,10 @@ const actions = {
             })
             .catch(error => {});
     },
-    acceptFriendRequest({ commit, state }, userId) {
+    acceptFriendRequest({
+        commit,
+        state
+    }, userId) {
         axios
             .post("/api/friend-request-response", {
                 user_id: userId,
@@ -74,7 +103,10 @@ const actions = {
             })
             .catch(error => {});
     },
-    ignoreFriendRequest({ commit, state }, userId) {
+    ignoreFriendRequest({
+        commit,
+        state
+    }, userId) {
         axios
             .delete("/api/friend-request-response/delete", {
                 data: {
@@ -97,6 +129,13 @@ const mutations = {
     },
     setUserStatus(state, status) {
         state.userStatus = status;
+    },
+    setPosts(state, posts) {
+        state.posts = posts;
+
+    },
+    setpPostsStatus(state, status) {
+        state.postsStatus = status;
     }
 };
 

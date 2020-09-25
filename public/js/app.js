@@ -2298,29 +2298,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     };
   },
   mounted: function mounted() {
-    var _this = this;
-
     this.$store.dispatch("fetchUser", this.$route.params.userId);
-    axios.get("/api/users/" + this.$route.params.userId).then(function (res) {
-      _this.$store.user = res.data;
-    })["catch"](function (error) {
-      console.log("unable to fatch");
-    })["finally"](function () {
-      _this.userLoading = false;
-    });
-    axios.get("/api/users/" + this.$route.params.userId + "/posts").then(function (res) {
-      _this.posts = res.data;
-    })["catch"](function (error) {
-      cosole.log("unable to facth post");
-    })["finally"](function () {
-      _this.postLoading = false;
-    });
+    this.$store.dispatch("fetchUserPosts", this.$route.params.userId);
   },
   computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapGetters"])({
-    user: 'user',
-    // posts: 'posts',
-    // status: 'status',
-    friendButtonText: 'friendButtonText'
+    user: "user",
+    posts: "posts",
+    status: "status",
+    friendButtonText: "friendButtonText"
   }))
 });
 
@@ -38560,14 +38545,14 @@ var render = function() {
           "div",
           {
             staticClass:
-              "absolute flex items-center bottom-0 right-0 mb-4 mr-12 z-20"
+              "absolute bottom-0 right-0 z-20 flex items-center mb-4 mr-12"
           },
           [
             _vm.friendButtonText && _vm.friendButtonText !== "Accept"
               ? _c(
                   "button",
                   {
-                    staticClass: "py-1 px-3 bg-gray-400 rounded",
+                    staticClass: "px-3 py-1 bg-gray-400 rounded",
                     on: {
                       click: function($event) {
                         return _vm.$store.dispatch(
@@ -38591,7 +38576,7 @@ var render = function() {
               ? _c(
                   "button",
                   {
-                    staticClass: "mr-2 py-1 px-3 bg-blue-500 rounded",
+                    staticClass: "px-3 py-1 mr-2 bg-blue-500 rounded",
                     on: {
                       click: function($event) {
                         return _vm.$store.dispatch(
@@ -38609,7 +38594,7 @@ var render = function() {
               ? _c(
                   "button",
                   {
-                    staticClass: "py-1 px-3 bg-gray-400 rounded",
+                    staticClass: "px-3 py-1 bg-gray-400 rounded",
                     on: {
                       click: function($event) {
                         return _vm.$store.dispatch(
@@ -55675,11 +55660,16 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vuex__WEBPACK_IMPORTED_MODULE_1__
 __webpack_require__.r(__webpack_exports__);
 var state = {
   user: null,
-  userStatus: null
+  userStatus: null,
+  posts: null,
+  postsStatus: null
 };
 var getters = {
   user: function user(state) {
     return state.user;
+  },
+  posts: function posts(state) {
+    return state.posts;
   },
   status: function status(state) {
     return {
@@ -55716,9 +55706,20 @@ var actions = {
       commit("setUserStatus", "error");
     });
   },
-  sendFriendRequest: function sendFriendRequest(_ref2, friendId) {
+  fetchUserPosts: function fetchUserPosts(_ref2, userId) {
     var commit = _ref2.commit,
-        getters = _ref2.getters;
+        dispatch = _ref2.dispatch;
+    commit("setpPostsStatus", "loading");
+    axios.get("/api/users/" + userId + '/posts').then(function (res) {
+      commit("setPosts", res.data);
+      commit("setpPostsStatus", "success");
+    })["catch"](function (error) {
+      commit("setpPostsStatus", "error");
+    });
+  },
+  sendFriendRequest: function sendFriendRequest(_ref3, friendId) {
+    var commit = _ref3.commit,
+        getters = _ref3.getters;
 
     if (getters.friendButtonText !== "Add Friend") {
       return;
@@ -55730,9 +55731,9 @@ var actions = {
       commit("setUserFriendship", res.data);
     })["catch"](function (error) {});
   },
-  acceptFriendRequest: function acceptFriendRequest(_ref3, userId) {
-    var commit = _ref3.commit,
-        state = _ref3.state;
+  acceptFriendRequest: function acceptFriendRequest(_ref4, userId) {
+    var commit = _ref4.commit,
+        state = _ref4.state;
     axios.post("/api/friend-request-response", {
       user_id: userId,
       status: 1
@@ -55740,9 +55741,9 @@ var actions = {
       commit("setUserFriendship", res.data);
     })["catch"](function (error) {});
   },
-  ignoreFriendRequest: function ignoreFriendRequest(_ref4, userId) {
-    var commit = _ref4.commit,
-        state = _ref4.state;
+  ignoreFriendRequest: function ignoreFriendRequest(_ref5, userId) {
+    var commit = _ref5.commit,
+        state = _ref5.state;
     axios["delete"]("/api/friend-request-response/delete", {
       data: {
         user_id: userId
@@ -55761,6 +55762,12 @@ var mutations = {
   },
   setUserStatus: function setUserStatus(state, status) {
     state.userStatus = status;
+  },
+  setPosts: function setPosts(state, posts) {
+    state.posts = posts;
+  },
+  setpPostsStatus: function setpPostsStatus(state, status) {
+    state.postsStatus = status;
   }
 };
 /* harmony default export */ __webpack_exports__["default"] = ({

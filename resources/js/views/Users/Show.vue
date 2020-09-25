@@ -10,20 +10,20 @@
              </div>
              <p class="ml-4 text-2xl text-gray-100 ">{{user.data.attributes.name}}</p>
          </div>
-     
-            <div class="absolute flex items-center bottom-0 right-0 mb-4 mr-12 z-20">
+
+            <div class="absolute bottom-0 right-0 z-20 flex items-center mb-4 mr-12">
                 <button v-if="friendButtonText && friendButtonText !== 'Accept'"
-                        class="py-1 px-3 bg-gray-400 rounded"
+                        class="px-3 py-1 bg-gray-400 rounded"
                         @click="$store.dispatch('sendFriendRequest', $route.params.userId)">
                     {{ friendButtonText }}
                 </button>
                 <button v-if="friendButtonText && friendButtonText === 'Accept'"
-                        class="mr-2 py-1 px-3 bg-blue-500 rounded"
+                        class="px-3 py-1 mr-2 bg-blue-500 rounded"
                         @click="$store.dispatch('acceptFriendRequest', $route.params.userId)">
                     Accept
                 </button>
                 <button v-if="friendButtonText && friendButtonText === 'Accept'"
-                        class="py-1 px-3 bg-gray-400 rounded"
+                        class="px-3 py-1 bg-gray-400 rounded"
                         @click="$store.dispatch('ignoreFriendRequest', $route.params.userId)">
                     Ignore
                 </button>
@@ -38,53 +38,32 @@
 </template>
 <script>
 import Post from "../../components/Post";
-import {mapGetters} from 'vuex';
+import { mapGetters } from "vuex";
 
-    export default {
-        name: "Show",
+export default {
+  name: "Show",
   components: {
-    Post,
+    Post
   },
   data: () => {
     return {
       posts: null,
 
-      postLoading: true,
+      postLoading: true
     };
   },
   mounted() {
     this.$store.dispatch("fetchUser", this.$route.params.userId);
-    axios
-      .get("/api/users/" + this.$route.params.userId)
-      .then((res) => {
-        this.$store.user = res.data;
-      })
-      .catch((error) => {
-        console.log("unable to fatch");
-      })
-      .finally(() => {
-        this.userLoading = false;
-      });
-    axios
-      .get("/api/users/" + this.$route.params.userId + "/posts")
-      .then((res) => {
-        this.posts = res.data;
-      })
-      .catch((error) => {
-        cosole.log("unable to facth post");
-      })
-      .finally(() => {
-        this.postLoading = false;
-      });
+    this.$store.dispatch("fetchUserPosts", this.$route.params.userId);
   },
   computed: {
     ...mapGetters({
-   user: 'user',
-      // posts: 'posts',
-      // status: 'status',
-   friendButtonText: 'friendButtonText',
-    }),
-  },
+      user: "user",
+      posts: "posts",
+      status: "status",
+      friendButtonText: "friendButtonText"
+    })
+  }
 };
 </script>
 <style scoped>
