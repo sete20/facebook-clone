@@ -22,18 +22,16 @@ class postController extends Controller
             Post::whereIn('user_id', [$friends->pluck('user_id'), $friends->pluck('friend_id')])
                 ->get()
         );
-
     }
     public function store()
     {
         $data = request()->validate([
-            'data.attributes.body' => '',
+            'body' => '',
         ]);
         // dd($data);
 
-        $post = request()->user()->posts()->create($data['data']['attributes']);
+        $post = request()->user()->posts()->create($data);
         return new PostResource($post);
         //  return response(201);
     }
-
 }
