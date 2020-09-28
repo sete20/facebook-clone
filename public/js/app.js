@@ -2175,9 +2175,56 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "Post",
-  props: ['post']
+  props: ["post"]
 });
 
 /***/ }),
@@ -38962,12 +39009,20 @@ var render = function() {
           _c("div", { staticClass: "ml-6" }, [
             _c("div", { staticClass: "text-sm font-bold" }, [
               _vm._v(
-                _vm._s(_vm.post.data.attributes.posted_by.data.attributes.name)
+                "\n          " +
+                  _vm._s(
+                    _vm.post.data.attributes.posted_by.data.attributes.name
+                  ) +
+                  "\n        "
               )
             ]),
             _vm._v(" "),
             _c("div", { staticClass: "text-sm text-gray-600" }, [
-              _vm._v(_vm._s(_vm.post.data.attributes.posted_at))
+              _vm._v(
+                "\n          " +
+                  _vm._s(_vm.post.data.attributes.posted_at) +
+                  "\n        "
+              )
             ])
           ])
         ]),
@@ -39010,7 +39065,11 @@ var render = function() {
               ]
             ),
             _vm._v(" "),
-            _c("p", [_vm._v("Jane Smith and 137 others")])
+            _c("p", [
+              _vm._v(
+                _vm._s(_vm.post.data.attributes.likes.like_count) + " likes"
+              )
+            ])
           ]),
           _vm._v(" "),
           _vm._m(1)
@@ -39025,7 +39084,20 @@ var render = function() {
             "button",
             {
               staticClass:
-                "flex justify-center w-full py-2 text-sm text-gray-700 rounded-lg hover:bg-gray-200"
+                "flex justify-center w-full py-2 text-sm rounded-lg focus:outline-none",
+              class: [
+                _vm.post.data.attributes.likes.user_likes_post
+                  ? "bg-blue-600 text-white"
+                  : ""
+              ],
+              on: {
+                click: function($event) {
+                  return _vm.$store.dispatch("likePost", {
+                    postId: _vm.post.data.post_id,
+                    postKey: _vm.$vnode.key
+                  })
+                }
+              }
             },
             [
               _c(
@@ -39175,8 +39247,8 @@ var render = function() {
       _vm._v(" "),
       _vm.newsStatus.postsStatus === "loading"
         ? _c("p", [_vm._v("Loading posts...")])
-        : _vm._l(_vm.posts.data, function(post) {
-            return _c("Post", { key: post.data.post_id, attrs: { post: post } })
+        : _vm._l(_vm.posts.data, function(post, postKey) {
+            return _c("Post", { key: postKey, attrs: { post: post } })
           })
     ],
     2
@@ -56428,6 +56500,16 @@ var actions = {
       commit('setPostsStatus', 'success');
       commit('updateMessage', '');
     })["catch"](function (error) {});
+  },
+  likePost: function likePost(_ref3, data) {
+    var commit = _ref3.commit,
+        state = _ref3.state;
+    axios.post('/api/posts/' + data.postId + '/like').then(function (res) {
+      commit('pushLikes', {
+        likes: res.data,
+        postKey: data.postKey
+      });
+    })["catch"](function (error) {});
   }
 };
 var mutations = {
@@ -56442,6 +56524,9 @@ var mutations = {
   },
   pushPost: function pushPost(state, post) {
     state.posts.data.unshift(post);
+  },
+  pushLikes: function pushLikes(state, data) {
+    state.posts.data[data.postKey].data.attributes.likes = data.likes;
   }
 };
 /* harmony default export */ __webpack_exports__["default"] = ({
