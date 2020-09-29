@@ -42,7 +42,7 @@
       </div>
 
       <div>
-        <p>123 comments</p>
+        <p>{{ post.data.attributes.comments.comment_count }} comments</p>
       </div>
     </div>
 
@@ -73,7 +73,8 @@
         <p class="ml-2">Like</p>
       </button>
       <button
-        class="flex justify-center w-full py-2 text-sm text-gray-700 rounded-lg hover:bg-gray-200"
+        class="flex justify-center w-full py-2 text-sm text-gray-700 rounded-lg focus:outline-none"
+        @click="comments = !comments"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -87,13 +88,77 @@
         <p class="ml-2">Comment</p>
       </button>
     </div>
+
+    <div v-if="comments" class="p-4 pt-2 border-t border-gray-400">
+      <div class="flex">
+        <input
+          v-model="commentBody"
+          type="text"
+          name="comment"
+          class="w-full h-8 pl-4 bg-gray-200 rounded-lg focus:outline-none"
+          placeholder="Write your comment"
+        />
+        <button
+          v-if="commentBody"
+          class="px-2 py-1 ml-2 bg-gray-200 rounded-lg focus:outline-none"
+          @click="
+            $store.dispatch('commentPost', {
+              body: commentBody,
+              postId: post.data.post_id,
+              postKey: $vnode.key,
+            });
+            commentBody = '';
+          "
+        >
+          Post
+        </button>
+      </div>
+      <div
+        class="flex items-center my-4"
+        v-for="comment in post.data.attributes.comments.data"
+      >
+        <div class="w-8">
+          <img
+            src="https://cdn.pixabay.com/photo/2014/07/09/10/04/man-388104_960_720.jpg"
+            alt="profile image for user"
+            class="object-cover w-8 h-8 rounded-full"
+          />
+        </div>
+        <div class="flex-1 ml-4">
+          <div class="p-2 text-sm bg-gray-200 rounded-lg">
+            <a
+              class="font-bold text-blue-700"
+              :href="
+                '/users/' + comment.data.attributes.commented_by.data.user_id
+              "
+            >
+              {{ comment.data.attributes.commented_by.data.attributes.name }}
+            </a>
+            <p class="inline">
+              {{ comment.data.attributes.body }}
+            </p>
+          </div>
+          <div class="pl-2 text-xs">
+            <p>{{ comment.data.attributes.commented_at }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
+
 
 <script>
 export default {
   name: "Post",
   props: ["post"],
+
+  data: () => {
+    return {
+      comments: false,
+      commentBody: "",
+    };
+  },
 };
 </script>
 

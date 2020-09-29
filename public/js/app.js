@@ -2222,9 +2222,73 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "Post",
-  props: ["post"]
+  props: ["post"],
+  data: function data() {
+    return {
+      comments: false,
+      commentBody: ""
+    };
+  }
 });
 
 /***/ }),
@@ -2356,38 +2420,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "Show",
   components: {
     Post: _components_Post__WEBPACK_IMPORTED_MODULE_0__["default"]
-  },
-  data: function data() {
-    return {
-      posts: null,
-      postLoading: true
-    };
   },
   mounted: function mounted() {
     this.$store.dispatch("fetchUser", this.$route.params.userId);
@@ -39072,7 +39110,14 @@ var render = function() {
             ])
           ]),
           _vm._v(" "),
-          _vm._m(1)
+          _c("div", [
+            _c("p", [
+              _vm._v(
+                _vm._s(_vm.post.data.attributes.comments.comment_count) +
+                  " comments"
+              )
+            ])
+          ])
         ]
       ),
       _vm._v(" "),
@@ -39127,7 +39172,12 @@ var render = function() {
             "button",
             {
               staticClass:
-                "flex justify-center w-full py-2 text-sm text-gray-700 rounded-lg hover:bg-gray-200"
+                "flex justify-center w-full py-2 text-sm text-gray-700 rounded-lg focus:outline-none",
+              on: {
+                click: function($event) {
+                  _vm.comments = !_vm.comments
+                }
+              }
             },
             [
               _c(
@@ -39153,7 +39203,117 @@ var render = function() {
             ]
           )
         ]
-      )
+      ),
+      _vm._v(" "),
+      _vm.comments
+        ? _c(
+            "div",
+            { staticClass: "p-4 pt-2 border-t border-gray-400" },
+            [
+              _c("div", { staticClass: "flex" }, [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.commentBody,
+                      expression: "commentBody"
+                    }
+                  ],
+                  staticClass:
+                    "w-full h-8 pl-4 bg-gray-200 rounded-lg focus:outline-none",
+                  attrs: {
+                    type: "text",
+                    name: "comment",
+                    placeholder: "Write your comment"
+                  },
+                  domProps: { value: _vm.commentBody },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.commentBody = $event.target.value
+                    }
+                  }
+                }),
+                _vm._v(" "),
+                _vm.commentBody
+                  ? _c(
+                      "button",
+                      {
+                        staticClass:
+                          "px-2 py-1 ml-2 bg-gray-200 rounded-lg focus:outline-none",
+                        on: {
+                          click: function($event) {
+                            _vm.$store.dispatch("commentPost", {
+                              body: _vm.commentBody,
+                              postId: _vm.post.data.post_id,
+                              postKey: _vm.$vnode.key
+                            })
+                            _vm.commentBody = ""
+                          }
+                        }
+                      },
+                      [_vm._v("\n        Post\n      ")]
+                    )
+                  : _vm._e()
+              ]),
+              _vm._v(" "),
+              _vm._l(_vm.post.data.attributes.comments.data, function(comment) {
+                return _c("div", { staticClass: "flex items-center my-4" }, [
+                  _vm._m(1, true),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "flex-1 ml-4" }, [
+                    _c(
+                      "div",
+                      { staticClass: "p-2 text-sm bg-gray-200 rounded-lg" },
+                      [
+                        _c(
+                          "a",
+                          {
+                            staticClass: "font-bold text-blue-700",
+                            attrs: {
+                              href:
+                                "/users/" +
+                                comment.data.attributes.commented_by.data
+                                  .user_id
+                            }
+                          },
+                          [
+                            _vm._v(
+                              "\n            " +
+                                _vm._s(
+                                  comment.data.attributes.commented_by.data
+                                    .attributes.name
+                                ) +
+                                "\n          "
+                            )
+                          ]
+                        ),
+                        _vm._v(" "),
+                        _c("p", { staticClass: "inline" }, [
+                          _vm._v(
+                            "\n            " +
+                              _vm._s(comment.data.attributes.body) +
+                              "\n          "
+                          )
+                        ])
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "pl-2 text-xs" }, [
+                      _c("p", [
+                        _vm._v(_vm._s(comment.data.attributes.commented_at))
+                      ])
+                    ])
+                  ])
+                ])
+              })
+            ],
+            2
+          )
+        : _vm._e()
     ]
   )
 }
@@ -39176,7 +39336,16 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", [_c("p", [_vm._v("123 comments")])])
+    return _c("div", { staticClass: "w-8" }, [
+      _c("img", {
+        staticClass: "object-cover w-8 h-8 rounded-full",
+        attrs: {
+          src:
+            "https://cdn.pixabay.com/photo/2014/07/09/10/04/man-388104_960_720.jpg",
+          alt: "profile image for user"
+        }
+      })
+    ])
   }
 ]
 render._withStripped = true
@@ -39300,142 +39469,24 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    { staticClass: "flex flex-col items-center " },
-    [
-      _c("div", { staticClass: "relative mb-8" }, [
-        _vm._m(0),
-        _vm._v(" "),
-        _c(
-          "div",
-          {
-            staticClass:
-              "absolute bottom-0 left-0 z-20 flex items-center ml-12 -mb-8 "
-          },
-          [
-            _vm._m(1),
-            _vm._v(" "),
-            _c("p", { staticClass: "ml-4 text-2xl text-gray-100 " }, [
-              _vm._v(_vm._s(_vm.user.data.attributes.name))
-            ])
-          ]
-        ),
-        _vm._v(" "),
-        _c(
-          "div",
-          {
-            staticClass:
-              "absolute bottom-0 right-0 z-20 flex items-center mb-4 mr-12"
-          },
-          [
-            _vm.friendButtonText && _vm.friendButtonText !== "Accept"
-              ? _c(
-                  "button",
-                  {
-                    staticClass: "px-3 py-1 bg-gray-400 rounded",
-                    on: {
-                      click: function($event) {
-                        return _vm.$store.dispatch(
-                          "sendFriendRequest",
-                          _vm.$route.params.userId
-                        )
-                      }
-                    }
-                  },
-                  [
-                    _vm._v(
-                      "\n                " +
-                        _vm._s(_vm.friendButtonText) +
-                        "\n            "
-                    )
-                  ]
-                )
-              : _vm._e(),
-            _vm._v(" "),
-            _vm.friendButtonText && _vm.friendButtonText === "Accept"
-              ? _c(
-                  "button",
-                  {
-                    staticClass: "px-3 py-1 mr-2 bg-blue-500 rounded",
-                    on: {
-                      click: function($event) {
-                        return _vm.$store.dispatch(
-                          "acceptFriendRequest",
-                          _vm.$route.params.userId
-                        )
-                      }
-                    }
-                  },
-                  [_vm._v("\n                Accept\n            ")]
-                )
-              : _vm._e(),
-            _vm._v(" "),
-            _vm.friendButtonText && _vm.friendButtonText === "Accept"
-              ? _c(
-                  "button",
-                  {
-                    staticClass: "px-3 py-1 bg-gray-400 rounded",
-                    on: {
-                      click: function($event) {
-                        return _vm.$store.dispatch(
-                          "ignoreFriendRequest",
-                          _vm.$route.params.userId
-                        )
-                      }
-                    }
-                  },
-                  [_vm._v("\n                Ignore\n            ")]
-                )
-              : _vm._e()
-          ]
-        )
-      ]),
-      _vm._v(" "),
-      _vm.postLoading
-        ? _c("p", [_vm._v("Loading Posts ......")])
-        : _vm._l(_vm.posts.data, function(post) {
-            return _c("Post", { key: post.data.post_id, attrs: { post: post } })
-          }),
-      _vm._v(" "),
-      !_vm.postLoading && _vm.posts.data.length < 1
-        ? _c("p", [_vm._v(" No Posts Yet. Get Starting !")])
-        : _vm._e()
-    ],
-    2
-  )
+  return _vm.status.user === "success" && _vm.user
+    ? _c(
+        "div",
+        { staticClass: "flex flex-col items-center" },
+        [
+          _vm.status.posts === "loading"
+            ? _c("div", [_vm._v("Loading posts...")])
+            : _vm.posts.length < 1
+            ? _c("div", [_vm._v("No posts found. Get started...")])
+            : _vm._l(_vm.posts.data, function(post, postKey) {
+                return _c("Post", { key: postKey, attrs: { post: post } })
+              })
+        ],
+        2
+      )
+    : _vm._e()
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "z-10 h-64 overflow-hidden w-100" }, [
-      _c("img", {
-        staticClass: "object-cover w-full",
-        attrs: {
-          src:
-            "https://i.pinimg.com/564x/94/f2/17/94f2173d535f6d049c5e27e120e50e33.jpg"
-        }
-      })
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "w-32 " }, [
-      _c("img", {
-        staticClass:
-          "object-cover w-32 h-32 border-4 border-gray-200 rounded-full shadow-lg",
-        attrs: {
-          src: "http://abderlrhman-portfolio.site/img/about/about-1.jpg",
-          alt: "profile image for user"
-        }
-      })
-    ])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -56510,6 +56561,18 @@ var actions = {
         postKey: data.postKey
       });
     })["catch"](function (error) {});
+  },
+  commentPost: function commentPost(_ref4, data) {
+    var commit = _ref4.commit,
+        state = _ref4.state;
+    axios.post('/api/posts/' + data.postId + '/comment', {
+      body: data.body
+    }).then(function (res) {
+      commit('pushComments', {
+        comments: res.data,
+        postKey: data.postKey
+      });
+    })["catch"](function (error) {});
   }
 };
 var mutations = {
@@ -56527,6 +56590,9 @@ var mutations = {
   },
   pushLikes: function pushLikes(state, data) {
     state.posts.data[data.postKey].data.attributes.likes = data.likes;
+  },
+  pushComments: function pushComments(state, data) {
+    state.posts.data[data.postKey].data.attributes.comments = data.comments;
   }
 };
 /* harmony default export */ __webpack_exports__["default"] = ({
